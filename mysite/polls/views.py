@@ -1,5 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from .models import Choice, Question
+
 
 from .models import Question
 def index(request):
@@ -16,15 +21,60 @@ def index(request):
    # Template -> Which HTML file 
    # Context -> What data should appear 
 
-    # return HttpResponse("Hello Viewer , You'r at the polls index")
-
 def detail(request,question_id):
-    return HttpResponse(f"You're looking at question {question_id}.")
+    
+    #   try:
+    #     question = Question.objects.get(pk=question_id)
+    #   except Question.DoesNotExist:
+    #     raise Http404("Question does not exist")
+
+    question = get_object_or_404(
+        Question,
+        pk = question_id
+    )
+    context = {
+        "question":question
+    }
+    return render(request,"polls/detail.html",context)
+
+
+# Find question
+# Found?
+#      │
+#   Yes│ No
+#      │
+#      ▼
+# Return object or Return a 404 page
+
+
+
+def vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+
+    try:
+        selected_choice = question.choice_set.get(
+            pk=request.POST["choice"]
+        )
+    except (KeyError, Choice.DoesNotExist):
+        return render(
+            request,
+            "polls/detail.html",
+            {
+                "question": question,
+                "error_message": "You didn't select a choice.",
+            },
+        )
+
+    selected_choice.votes += 1
+    selected_choice.save()
+
+    return HttpResponseRedirect(
+        reverse("polls:results", args=(question.id,))
+    )
+
 
 def result(request,question_id):
     return HttpResponse(f"You're looking at the results of question {question_id}.")
 
-def vote(request,question_id):
-    return HttpResponse(f"You're voting on question {question_id}.")
 
 
