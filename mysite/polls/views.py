@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -22,7 +21,7 @@ def index(request):
    # Context -> What data should appear 
 
 def detail(request,question_id):
-    
+
     #   try:
     #     question = Question.objects.get(pk=question_id)
     #   except Question.DoesNotExist:
@@ -74,7 +73,12 @@ def vote(request, question_id):
 
 
 def result(request,question_id):
-    return HttpResponse(f"You're looking at the results of question {question_id}.")
+    question = get_object_or_404(Question,pk = question_id)
+    return render(
+        request,
+        "polls/results.html",
+        {"question":question},
+    )
 
 
 
