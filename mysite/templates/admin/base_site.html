@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}
+<!-- Use Django's default admin page and only replace the part we specify. -->
+{% block branding %} 
+<!-- replaces default title  -->
+  <div id="site-name">
+    <a href="{% url 'admin:index' %}">
+      Polls Application Admin Portal
+    </a>
+  </div>
+{% endblock %}
+{% block nav-global %}
+<p>Welcome to the Polls Management System</p>
+{% endblock %}
+
+
