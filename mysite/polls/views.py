@@ -3,39 +3,43 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import Choice, Question
+from django.views import generic 
+from django.utils import timezone
 
 
-from .models import Question
-def index(request):
-    latest_question_list = Question.objects.order_by("-pub_date")[:5] #querying the db 
+class IndexView(generic.ListView):
+
+# ListView already knows how to:
+# Query objects
+# Pass them to the template
+# Render HTML
+
+    template_name = "polls/index.html"
+    context_object_name = "latest_question_list"
+    def get_queryset(self):
+        """
+        Return the last five published questions 
+        (not including those set to be published in the future )
+        """
+        return (
+            Question.objects.filter( 
+               pub_date__lte = timezone.now()) # pub_date <= current time 
+            .order_by("-pub_date")[:5]
+            
+            ) #querying the db 
     #question.objects -> question table slice 5 -newest first 
 
-    context = {
-        "latest_question_list": latest_question_list
-    } 
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = "polls/detail.html"
 
-    return render(request,"polls/index.html",context)
-   # render needs three things 
-   # Request - > who asked 
-   # Template -> Which HTML file 
-   # Context -> What data should appear 
-
-def detail(request,question_id):
-
-    #   try:
-    #     question = Question.objects.get(pk=question_id)
-    #   except Question.DoesNotExist:
-    #     raise Http404("Question does not exist")
-
-    question = get_object_or_404(
-        Question,
-        pk = question_id
-    )
-    context = {
-        "question":question
-    }
-    return render(request,"polls/detail.html",context)
-
+    def get_queryset(self):
+        """
+        Excludes any questions that aren't published yet.
+        """
+        return Question.objects.filter(
+            pub_date__lte=timezone.now()
+        )
 
 # Find question
 # Found?
@@ -44,7 +48,6 @@ def detail(request,question_id):
 #      │
 #      ▼
 # Return object or Return a 404 page
-
 
 
 def vote(request, question_id):
@@ -71,14 +74,12 @@ def vote(request, question_id):
         reverse("polls:results", args=(question.id,))
     )
 
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = "polls/results.html"
+   
 
-def result(request,question_id):
-    question = get_object_or_404(Question,pk = question_id)
-    return render(
-        request,
-        "polls/results.html",
-        {"question":question},
-    )
+
 
 
 
