@@ -55,8 +55,9 @@ def vote(request, question_id):
 
     try:
         selected_choice = question.choice_set.get(
-            pk=request.POST["choice"]
+            pk=request.POST["choice"]  
         )
+
     except (KeyError, Choice.DoesNotExist):
         return render(
             request,

@@ -2,29 +2,33 @@
 
 <link rel="stylesheet" href="{% static 'polls/style.css' %}">
 
-<h1>{{ question.question_text }}</h1>
+<h1>{{ question.question_text }}</h1> 
+<!-- displays question text passed from view -->
 
 {% if error_message %}
     <p><strong>{{ error_message }}</strong></p>
 {% endif %}
-
+<!-- displays error if the user didn't select choice  -->
+<!-- sends the form to vote view  -->
 <form action="{% url 'polls:vote' question.id %}" method="post">
     {% csrf_token %}
+    <!-- without csrf we get 403 forbidden  -->
 
-    {% for choice in question.choice_set.all %}
+    {% for choice in question.choice_set.all %} 
         <input
             type="radio"
-            name="choice"
+            name="choice" 
             id="choice{{ forloop.counter }}"
-            value="{{ choice.id }}"
+            value="{{ choice.id }}" 
         >
 
         <label for="choice{{ forloop.counter }}">
             {{ choice.choice_text }}
         </label>
 
-        <br>
+        <br> 
     {% endfor %}
-    <input type="submit" value="Vote">
+
+    <input type="submit" value="Vote" style="width:50px ; height:30px ; display:block ; margin-top:50px ; align-items : center"> 
 
 </form>

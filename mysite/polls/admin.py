@@ -5,7 +5,7 @@ from .models import Question , Choice
 # admin.site.register(Question)
 # admin.site.register(Choice)
 
-class ChoiceInline(admin.TabularInline):
+class ChoiceInline(admin.TabularInline): # admin.StackedInline
     '''
     #When editing a Question display its related Choice objects
     extra 3 choices 

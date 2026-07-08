@@ -12,11 +12,12 @@
     {% endfor %}
 </ul>
 
-<a href="{% url 'polls:detail' question.id %}">
+<button style = "margin-top : 30px;"><a href="{% url 'polls:detail' question.id %}">
     Vote again?
-</a>
-<br>
-<a href="{% url 'polls:index' %}">
+</a> </button>
+
+
+<button style = "margin-left: 40px;"><a href="{% url 'polls:index' %}">
     Go to questions
 
-</a>
+</a></button>
